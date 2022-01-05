@@ -43,6 +43,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "productImage")));
 
+// Serve static assets if in production
+if (process.env.NODE_ENV === "production") {
+  // Set static folder
+  app.use("/", express.static("public"));
+
+  app.get("/", (req, res) => res.sendFile(__dirname + "/public/index.html"));
+
+  // app.get("*", (req, res) => {
+  //   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  // });
+} else {
+  app.get("/", (req, res) => res.send("Api running"));
+}
+
 app.use("/", indexRouter);
 app.use("/products", productRouter);
 app.use("/order", orderRouter);
@@ -66,19 +80,5 @@ app.use(function (err, req, res, next) {
     message: err.message,
   });
 });
-
-// Serve static assets if in production
-if (process.env.NODE_ENV === "production") {
-  // Set static folder
-  app.use("/", express.static("public"));
-
-  app.get("/", (req, res) => res.sendFile(__dirname + "/public/index.html"));
-
-  // app.get("*", (req, res) => {
-  //   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-  // });
-} else {
-  app.get("/", (req, res) => res.send("Api running"));
-}
 
 module.exports = app;
