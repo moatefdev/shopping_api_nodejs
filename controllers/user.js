@@ -119,12 +119,14 @@ exports.signup = (req, res, next) => {
 exports.signin = (req, res, next) => {
   User.find({ username: req.body.username })
     .then((user) => {
+      console.log(user[0]);
+      const fullname = user[0].fullname;
       const userID = user[0]._id;
       const username = user[0].username;
       const userRole = user[0].admin;
       const token = createToken(userRole, username, userID);
-      // console.log("id", userID);
-      // console.log(userRole);
+      console.log("id", userID);
+      console.log(userRole);
       console.log(token);
       res.cookie("access_token", token);
       if (user.length >= 1) {
